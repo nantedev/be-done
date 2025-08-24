@@ -23,6 +23,12 @@ app.get("/dons", async (req, res) => {
   res.send(dons);
 });
 
+app.get("/don/:id", async (req, res) => {
+  const { id } = req.params;
+  const don = await Don.findById(id);
+  res.send(don);
+});
+
 app.get("/", (req, res) => {
   res.send("express is running");
 });
