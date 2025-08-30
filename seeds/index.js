@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import cities from "./cities.js";
-import {descriptors, names, types} from "./seedHelpers.js";
+import {objets} from "./seedHelpers.js";
 import Don from "../models/don.js";
 
 mongoose.connect("mongodb://localhost:27017/done");
@@ -10,19 +10,21 @@ db.once("open", () => {
   console.log("MongoDB connected successfully");
 });
 
-const sample = array => array[Math.floor(Math.random() * array.length)];
 
 
 const seedDB = async () => {
   await Don.deleteMany({});
- for (let i = 0; i < 200; i++) {
-        const random1000 = Math.floor(Math.random() * 1000);
-        const don = new Don({
-            title: `${sample(names)} ${sample(descriptors)} `,
-            location: `${cities[random1000].city_code}, ${cities[random1000].region_geojson_name}`
-        });
-    await don.save();
-  }
+  const seedDons = objets.map(objet => {
+    const random1000 = Math.floor(Math.random() * 1000);
+    const city = cities[random1000];
+    return {
+      title: objet.name,
+      description: objet.description,
+      location: `${city.city_code}, ${city.region_geojson_name}`,
+      image: objet.image
+    };
+  });
+  await Don.insertMany(seedDons);
 };
 
 seedDB().then(() => {
